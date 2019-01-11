@@ -1,14 +1,19 @@
 """ Key signing excercise"""
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
 
 def generate_keys():
     """Generates public and private key"""
     private_key = rsa.generate_private_key(public_exponent=65537, key_size=1024,
                                            backend=default_backend())
-    return private_key, private_key.public_key()
+    public_key = private_key.public_key()
+    pem = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    return private_key, pem
 
 def sign(message, private):
     """Generates signature for the message from the private key"""
@@ -21,8 +26,9 @@ def sign(message, private):
 
 def verify(message, sig, public):
     """Verifies signature with the public key"""
+    public_key = serialization.load_pem_public_key(public, backend=default_backend())
     try:
-        public.verify(
+        public_key.verify(
             sig,
             bytes(str(message), "utf-8"),
             padding.PSS(

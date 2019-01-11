@@ -56,6 +56,21 @@ class Tx:
             return False
         return True
 
+    def __repr__ (self):
+        repr_str = "INPUTS: \n"
+        for address, amount in self.inputs:
+            repr_str += "\t" + str(amount) + " from " + str(address)  +"\n"
+        repr_str = "OUTPUS: \n"
+        for address, amount in self.outputs:
+            repr_str += "\t" + str(amount) + " to " + str(address) +  "\n"
+        repr_str = "ESCROW SIGNATURES: \n"
+        for r in self.reqd:
+            repr_str += "\t" + str(r) + "\n"
+        repr_str = "SIGNATURES: \n"
+        for s in self.sigs:
+            repr_str += "\t" + str(s) + "\n"
+        return repr_str
+
     def __gather(self):
         data = []
         data.append(self.inputs)

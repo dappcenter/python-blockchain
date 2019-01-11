@@ -2,12 +2,6 @@
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 
-#digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
-#digest.update(b"abc")
-#digest.update(b"123")
-#hash = digest.finalize()
-#print(hash)
-
 class someClass:
     string = None
     num = 1264378
@@ -35,6 +29,11 @@ class CBlock:
         digest.update(bytes(str(self.previous_hash), "utf-8"))
         digest.update(bytes(str(self.data), "utf-8"))
         return digest.finalize()
+
+    def is_valid(self):
+        if self.previous_block is None:
+            return True
+        return self.previous_block.compute_hash() == self.previous_hash
 
 if __name__ == '__main__':
     root  = CBlock(b'I am root', None)
